@@ -1,0 +1,11 @@
+# Copy to .dev.vars (never commit .dev.vars).
+#
+# The Worker itself needs NO secrets: Workers AI, D1, Durable Objects and
+# Workflows are all reached through bindings declared in wrangler.jsonc.
+#
+# These two values are only read by the scorer eval script
+# (`npm run eval`), which calls Workers AI over the REST API from Node.
+# Create a token at https://dash.cloudflare.com/profile/api-tokens with the
+# "Workers AI: Read" permission.
+CLOUDFLARE_ACCOUNT_ID=your-account-id
+CLOUDFLARE_API_TOKEN=your-workers-ai-token

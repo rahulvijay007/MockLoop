@@ -1,0 +1,41 @@
+{
+  "name": "cf_ai_mockloop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MockLoop: an AI mock-interview coach on Cloudflare Workers AI, Durable Objects (Agents SDK), Workflows and D1.",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "types": "wrangler types",
+    "db:migrate:local": "wrangler d1 migrations apply mockloop --local",
+    "db:migrate:remote": "wrangler d1 migrations apply mockloop --remote",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.client.json",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "eval": "tsx scripts/eval-scorer.ts",
+    "prompts:render": "tsx scripts/render-prompts.ts"
+  },
+  "dependencies": {
+    "agents": "0.27.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "0.22.0",
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^22.20.5",
+    "@vitest/runner": "4.1.11",
+    "@vitest/snapshot": "4.1.11",
+    "eslint": "^10.12.0",
+    "globals": "^16.5.0",
+    "prettier": "^3.9.9",
+    "tsx": "^4.23.15",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.71.1",
+    "vitest": "4.1.11",
+    "wrangler": "^4.148.0"
+  }
+}

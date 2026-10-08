@@ -1,0 +1,67 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "cf-ai-mockloop",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-15",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+
+  // Chat UI. The Worker runs first for /api/* and /agents/* so routing stays
+  // in one place; everything else is served straight from ./public.
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*", "/agents/*"],
+  },
+
+  // Workers AI: Llama 3.3 70B. Runs remotely even during `wrangler dev`
+  // (requires `wrangler login`).
+  "ai": { "binding": "AI", "remote": true },
+
+  // One Durable Object (Agents SDK) per interview session, SQLite-backed.
+  "durable_objects": {
+    "bindings": [{ "name": "INTERVIEW_SESSION", "class_name": "InterviewSession" }],
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["InterviewSession"] }],
+
+  // Post-session evaluation pipeline.
+  "workflows": [
+    {
+      "name": "mockloop-evaluation",
+      "binding": "EVALUATION_WORKFLOW",
+      "class_name": "EvaluationWorkflow",
+    },
+  ],
+
+  // Finished reports + per-user weak-area profile.
+  // For deploy: run `npx wrangler d1 create mockloop` and paste the returned id here.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "mockloop",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations",
+    },
+  ],
+
+  // Workers Rate Limiting API. namespace_id is an arbitrary integer unique per account.
+  "ratelimits": [
+    {
+      "name": "SESSION_RATE_LIMITER",
+      "namespace_id": "41001",
+      "simple": { "limit": 5, "period": 60 },
+    },
+    {
+      "name": "MESSAGE_RATE_LIMITER",
+      "namespace_id": "41002",
+      "simple": { "limit": 20, "period": 60 },
+    },
+  ],
+
+  // Non-secret configuration. There are no secrets in this Worker.
+  "vars": {
+    "MODEL_ID": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+    "MAX_ANSWER_CHARS": "2000",
+    "MAX_TURNS": "12",
+  },
+}

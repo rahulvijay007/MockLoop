@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MockLoop</title>
+    <meta name="description" content="AI mock interview coach on Cloudflare Workers AI" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="MockLoop home">
+        <span class="brand-mark" aria-hidden="true">◎</span> MockLoop
+      </a>
+      <div class="conn" id="conn" hidden>
+        <span class="dot" aria-hidden="true"></span><span id="conn-label">Connecting…</span>
+      </div>
+    </header>
+
+    <main>
+      <!-- Setup -->
+      <section id="setup-view" class="view" hidden>
+        <div class="setup-grid">
+          <form id="setup-form" class="card" autocomplete="off">
+            <h1>Practice an interview</h1>
+            <p class="muted">
+              One question at a time, with follow-ups that adapt to your answers. When you finish,
+              you get a scored report and an improvement plan.
+            </p>
+            <label>
+              Target role
+              <input
+                name="role"
+                required
+                minlength="2"
+                maxlength="80"
+                placeholder="e.g. Backend Engineer"
+              />
+            </label>
+            <div class="row">
+              <label>
+                Seniority
+                <select name="seniority">
+                  <option value="junior">Junior</option>
+                  <option value="mid" selected>Mid-level</option>
+                  <option value="senior">Senior</option>
+                  <option value="staff">Staff</option>
+                </select>
+              </label>
+              <label>
+                Interview type
+                <select name="type">
+                  <option value="behavioral">Behavioral</option>
+                  <option value="technical" selected>Technical</option>
+                  <option value="system_design">System design</option>
+                </select>
+              </label>
+            </div>
+            <button type="submit" class="primary" id="start-btn">Start interview</button>
+            <p class="error" id="setup-error" role="alert" hidden></p>
+          </form>
+
+          <aside class="card" id="profile">
+            <h2>Your focus areas</h2>
+            <p class="muted" id="profile-empty">
+              Finish an interview and MockLoop will remember your recurring weak areas and target
+              them next time.
+            </p>
+            <ul id="weak-areas" class="weak-list"></ul>
+            <h2 id="history-title" hidden>Past reports</h2>
+            <ul id="history" class="history"></ul>
+          </aside>
+        </div>
+      </section>
+
+      <!-- Interview -->
+      <section id="interview-view" class="view" hidden>
+        <div class="interview-head">
+          <div>
+            <h1 id="session-title">Interview</h1>
+            <p class="muted" id="session-meta"></p>
+          </div>
+          <div class="chips">
+            <span class="chip" id="chip-difficulty" title="Adapts to your answers"
+              >Difficulty –</span
+            >
+            <span class="chip" id="chip-turns">0 / – answers</span>
+          </div>
+        </div>
+        <p class="focus-note" id="focus-note" hidden></p>
+
+        <div id="transcript" class="transcript" aria-live="polite"></div>
+
+        <div class="eval" id="eval-panel" hidden>
+          <div class="spinner" aria-hidden="true"></div>
+          <span id="eval-progress">Evaluating…</span>
+          <button type="button" id="retry-eval-btn" hidden>Retry evaluation</button>
+        </div>
+
+        <form id="composer" class="composer">
+          <textarea
+            id="answer"
+            rows="4"
+            placeholder="Type your answer… (Ctrl+Enter to send)"
+            aria-label="Your answer"
+          ></textarea>
+          <div class="composer-bar">
+            <div class="voice" id="voice" hidden>
+              <button type="button" id="mic-btn" aria-pressed="false" title="Dictate your answer">
+                🎙 Dictate
+              </button>
+              <label class="toggle" title="Read interviewer questions aloud">
+                <input type="checkbox" id="tts-toggle" /> Read aloud
+              </label>
+            </div>
+            <span class="counter" id="counter">0 / 2000</span>
+            <button type="button" id="retry-btn" hidden>Retry</button>
+            <button type="button" id="end-btn">End &amp; evaluate</button>
+            <button type="submit" class="primary" id="send-btn">Send</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Report -->
+      <section id="report-view" class="view" hidden>
+        <div class="report-head">
+          <div>
+            <h1>Interview report</h1>
+            <p class="muted" id="report-meta"></p>
+          </div>
+          <div class="score" id="report-score" aria-label="Overall score"></div>
+        </div>
+        <div class="card">
+          <h2>Summary</h2>
+          <p id="report-summary"></p>
+        </div>
+        <div class="report-grid">
+          <div class="card">
+            <h2>Rubric</h2>
+            <ul id="report-dimensions" class="bars"></ul>
+          </div>
+          <div class="card">
+            <h2>Improvement plan</h2>
+            <ol id="report-priorities" class="priorities"></ol>
+            <h3>Practice next</h3>
+            <ul id="report-practice"></ul>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Answer by answer</h2>
+          <div id="report-questions"></div>
+        </div>
+        <p><a href="/" class="button">Start another interview</a></p>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" role="status" hidden></div>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

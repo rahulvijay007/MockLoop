@@ -1,0 +1,16 @@
+{
+  // Type-checks the vanilla browser client (public/*.js uses // @ts-check + JSDoc).
+  "compilerOptions": {
+    "target": "es2022",
+    "lib": ["es2022", "dom", "dom.iterable"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "allowJs": true,
+    "checkJs": true,
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "types": []
+  },
+  "include": ["public/**/*.js"]
+}
